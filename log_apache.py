@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 ###################
-#    This tool parses access logs using python (with named regex). 
+#    This tool parses access logs using python (with named group in regex). 
 #    Copyright (C) 2024  Maurice Lambert
 
 #    This program is free software: you can redistribute it and/or modify
@@ -64,6 +64,14 @@ print(sum([x for y, x in counters["user_agent"].items() if b"Android" in y]))
 print(counters[b"POST-admin-index"]["count"])
 print(counters[b"5.255.72.168-agent"])
 print(sum([x for y, x in counters["user_agent"].items() if b"Googlebot" in y]))
-print(counters[b"images"].most_common())
+print(counters[b"images"].most_common(3))
 
-breakpoint()
+'''
+Counter({b'GET': 9952, b'HEAD': 42, b'POST': 5, b'OPTIONS': 1})
+Counter({b'1.1': 9300, b'1.0': 700})
+187
+0
+Counter({b'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:21.0) Gecko/20100101 Firefox/21.0': 2})
+543
+[(b'/favicon.ico', 807), (b'/images/jordan-80.png', 533), (b'/images/web/2009/banner.png', 516)]
+'''
