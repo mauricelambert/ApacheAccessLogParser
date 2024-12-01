@@ -39,8 +39,8 @@ cd QueryApacheAccessLog-main
 ```bash
 python3 query_apache_access_log.py <glob_syntax_log_files> <queries>...
 
-python3 query_apache_access_log.py access.log* "method = POST" 'status ~ 5??'
-python3 query_apache_access_log.py access.log* '(METHOD = post or url ~ *admin*) & (ip > 91.0.0.0 | referrer ~ *://*)'
+python3 query_apache_access_log.py 'access.log*' "method = POST" 'status ~ 5??'
+python3 query_apache_access_log.py 'access.log*' '(METHOD = post or url ~ *admin*) & (ip > 91.0.0.0 | referrer ~ *://*)'
 ```
 
 ### Query syntax
