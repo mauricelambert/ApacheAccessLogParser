@@ -25,6 +25,7 @@ from sys import argv, stderr, exit
 from datetime import datetime
 from fnmatch import fnmatch
 from os.path import isfile
+from gzip import GzipFile
 from glob import iglob
 from re import match
 
@@ -144,6 +145,14 @@ def evaluate(parsed_expr, data):
     
     return False
 
+def get_file(filename):
+    file = base_file = open(filename, 'rb')
+    magic = file.read(2)
+    file.seek(0)
+    if magic == b'\x1f\x8b':
+        return GzipFile(fileobj=file), base_file
+    return file, base_file
+
 if len(argv) < 3:
     print("USAGES: python3 query_apache_access_log.py <log_path> <queries>...", file=stderr)
     print("\tRequest example: method = POST", file=stderr)
@@ -167,7 +176,9 @@ for index, query in enumerate(argv[2:]):
     parsed_expr = parser.parse(query)
 
     for filename in iglob(globsyntax, recursive=True):
-        for line in open(filename):
+        file, base_file = get_file(filename)
+        for line in file:
+            line = line.decode('latin-1')
             parsing = match(r"""(?xs)
                 (?P<ip>(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))
                 (\s+-){2}\s+
@@ -190,5 +201,7 @@ for index, query in enumerate(argv[2:]):
 
             if evaluate(parsed_expr, values):
                 print(line.strip())
+
+        base_file.close()
 
 exit(0)
