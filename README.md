@@ -8,6 +8,7 @@ This script parses and implements a syntax to query and filter apache access log
 
 > This script has been written in forensic lessons and challenges for certification. It's a little script to reduce time for analysis.
 >> This script implements a basic and permissive syntax to query logs with details and typing.
+>> This script can parses multiples logs files using glob syntax and parses Gzip compressed logs files. If you have configured the Apache logs rotation and gzip compression you can use this script to analyze all of your logs with a simple command line.
 
 ## Requirements
 
@@ -89,6 +90,10 @@ python3 query_apache_access_log.py 'access.log*' '(METHOD = post or url ~ *admin
 ### Escape character
 
 `\` works only before a *spaces* or *operators* characters else is the `\` character.
+
+## Tests
+
+Data used for tests: https://raw.githubusercontent.com/linuxacademy/content-elastic-log-samples/refs/heads/master/access.log
 
 ## Links
 
