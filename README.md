@@ -38,6 +38,8 @@ cd QueryApacheAccessLog-main
 
 ```bash
 python3 query_apache_access_log.py <log_path> <queries>...
+
+python3 query_apache_access_log.py access.log "method = POST" 'status ~ 5??'
 ```
 
 ### Query syntax
