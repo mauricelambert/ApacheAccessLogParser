@@ -25,6 +25,7 @@ from sys import argv, stderr, exit
 from datetime import datetime
 from fnmatch import fnmatch
 from os.path import isfile
+from glob import iglob
 from re import match
 
 class ConditionalParser:
@@ -144,7 +145,7 @@ def evaluate(parsed_expr, data):
     return False
 
 if len(argv) < 3:
-    print("USAGES: python3 query_apache_access_log.py <log_path> <requests>...", file=stderr)
+    print("USAGES: python3 query_apache_access_log.py <log_path> <queries>...", file=stderr)
     print("\tRequest example: method = POST", file=stderr)
     print("\tRequest example: status ~ 50?", file=stderr)
     print("\tRequest example: size >= 60000000", file=stderr)
@@ -155,40 +156,39 @@ if len(argv) < 3:
     print("\tInter expression: and (& works too), or (| works too)", file=stderr)
     print("\tParenthesis can be use to prioritize expression, default priority: left to right", file=stderr)
     print("\tEscape character: \\, it's working only with space and operators.", file=stderr)
+    print("\tlog_path can be a glob syntax: ", file=stderr)
     exit(1)
 
-file = argv[1]
+globsyntax = argv[1]
 
-if not isfile(file):
-    print("Invalid filename:", repr(file))
-    exit(2)
-
-for query in argv[2:]:
+for index, query in enumerate(argv[2:]):
+    print("Match for query", index + 1, repr(query), file=stderr)
     parser = ConditionalParser()
     parsed_expr = parser.parse(query)
 
-    for line in open(file):
-        parsing = match(r"""(?xs)
-            (?P<ip>(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))
-            (\s+-){2}\s+
-            \[(?P<datetime>\d{2}/\w+/\d{4}(:\d{2}){3}\s+\+\d{4})\]\s+"
-            (?P<method>\w+)\s+
-            (?P<url>[^\s]+)\s+
-            HTTP/(?P<version>\d\.\d)"\s+
-            (?P<status>\d+)\s+
-            (?P<size>(\d+|-))\s+"
-            (?P<referrer>[^"]+)"\s+"
-            (?P<user_agent>[^"]+)"?\s*
-        """, line)
+    for filename in iglob(globsyntax, recursive=True):
+        for line in open(filename):
+            parsing = match(r"""(?xs)
+                (?P<ip>(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))
+                (\s+-){2}\s+
+                \[(?P<datetime>\d{2}/\w+/\d{4}(:\d{2}){3}\s+\+\d{4})\]\s+"
+                (?P<method>\w+)\s+
+                (?P<url>[^\s]+)\s+
+                HTTP/(?P<version>\d\.\d)"\s+
+                (?P<status>\d+)\s+
+                (?P<size>(\d+|-))\s+"
+                (?P<referrer>[^"]+)"\s+"
+                (?P<user_agent>[^"]+)"?\s*
+            """, line)
 
-        values = parsing.groupdict()
-        values['ip'] = ip_address(values['ip'])
-        values['datetime'] = datetime.strptime(values['datetime'], "%d/%b/%Y:%H:%M:%S %z")
-        values['version'] = float(values['version'])
-        values['status'] = int(values['status'])
-        values['size'] = int(values['size']) if values['size'] != '-' else 0
+            values = parsing.groupdict()
+            values['ip'] = ip_address(values['ip'])
+            values['datetime'] = datetime.strptime(values['datetime'], "%d/%b/%Y:%H:%M:%S %z")
+            values['version'] = float(values['version'])
+            values['status'] = int(values['status'])
+            values['size'] = int(values['size']) if values['size'] != '-' else 0
 
-        if evaluate(parsed_expr, values):
-            print(line.strip())
+            if evaluate(parsed_expr, values):
+                print(line.strip())
 
 exit(0)
