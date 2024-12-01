@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 ###################
-#    This scripts parses and query access logs a simple request syntax. 
+#    This script parses and implements a syntax to query and filter apache access logs,
+#    easiest and faster way to find your logs in incident response.
 #    Copyright (C) 2024  Maurice Lambert
 
 #    This program is free software: you can redistribute it and/or modify
