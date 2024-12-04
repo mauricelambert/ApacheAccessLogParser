@@ -1,14 +1,16 @@
-![QueryApacheAccessLog Logo](https://mauricelambert.github.io/info/python/security/QueryApacheAccessLog_small.png "QueryApacheAccessLog logo")
+![QueryCombinedLogFormat Logo](https://mauricelambert.github.io/info/python/security/QueryCombinedLogFormat_small.png "QueryCombinedLogFormat logo")
 
-# QueryApacheAccessLog
+# QueryCombinedLogFormat
 
 ## Description
 
-This script parses and implements a syntax to query and filter apache access logs, easiest and faster way to find your logs in incident response.
+This tool extracts, filters and parses combined log format (apache and nginx default access.log format) with a easy and fast language syntax.
 
-> This script has been written in forensic lessons and challenges for certification. It's a little script to reduce time for analysis.
->> This script implements a basic and permissive syntax to query logs with details and typing.
->> This script can parses multiples logs files using glob syntax and parses Gzip compressed logs files. If you have configured the Apache logs rotation and gzip compression you can use this script to analyze all of your logs with a simple command line.
+> This tool has been written in forensic lessons and challenges for certification. It's a little tool to reduce time for analysis.
+>> - This tool implements a basic and permissive syntax to query combined log files (apache and nginx default access.log format) with details and typing.
+>> - This tool can parses multiples logs files using glob syntax and parses Gzip compressed logs files. If you have configured the logs rotation and gzip compression you can use this tool to analyze all of your logs with a simple command line.
+>> - With this tool you can extract logs in a CSV and mJSON format to analyse it faster when you start this script multiple times on the same logs (in incident response). You can use the CSV file in excel with filtered logs for analyze or retex.
+>> - To identify faster suspicious logs, this script implements a statistics option to make a CLI table with values and counters.
 
 ## Requirements
 
@@ -18,19 +20,36 @@ This package require:
 
 ## Installation
 
+### Pip
+
+```bash
+python3 -m pip install QueryCombinedLogFormat
+```
+
 ### Git
 
 ```bash
-git clone "https://github.com/mauricelambert/QueryApacheAccessLog.git"
-cd "QueryApacheAccessLog"
+git clone "https://github.com/mauricelambert/QueryCombinedLogFormat.git"
+cd "QueryCombinedLogFormat"
+python3 -m pip install .
 ```
 
 ### Wget
 
 ```bash
-wget https://github.com/mauricelambert/QueryApacheAccessLog/archive/refs/heads/main.zip
+wget https://github.com/mauricelambert/QueryCombinedLogFormat/archive/refs/heads/main.zip
 unzip main.zip
-cd QueryApacheAccessLog-main
+cd QueryCombinedLogFormat-main
+python3 -m pip install .
+```
+
+### cURL
+
+```bash
+curl -O https://github.com/mauricelambert/QueryCombinedLogFormat/archive/refs/heads/main.zip
+unzip main.zip
+cd QueryCombinedLogFormat-main
+python3 -m pip install .
 ```
 
 ## Usages
@@ -38,10 +57,15 @@ cd QueryApacheAccessLog-main
 ### Command line
 
 ```bash
-python3 query_apache_access_log.py <glob_syntax_log_files> <queries>...
+QueryCombinedLogFormat              # Using CLI package executable
+python3 -m QueryCombinedLogFormat   # Using python module
+python3 QueryCombinedLogFormat.pyz  # Using python executable
+QueryCombinedLogFormat.exe          # Using python Windows executable
 
-python3 query_apache_access_log.py 'access.log*' "method = POST" 'status ~ 5??'
-python3 query_apache_access_log.py 'access.log*' '(METHOD = post or url ~ *admin*) & (ip > 91.0.0.0 | referrer ~ *://*)'
+QueryCombinedLogFormat [-s|--statistics] [-d|--to-db] <glob_syntax_log_files> <queries>...
+
+QueryCombinedLogFormat -d 'access.log*' "method = POST" 'status ~ 5??' # print logs and generate a DB file with POST method or server error (http status 5XX)
+QueryCombinedLogFormat -s 'access_log_db_*.csv' '(METHOD = post or url ~ *admin*) & (ip > 91.0.0.0 | referrer ~ *://*)' # use the precedent generated DB to get statistics for POST request or admin URL for all IP address greater than 91.0.0.0 or with a url referrer
 ```
 
 ### Query syntax
@@ -74,6 +98,7 @@ python3 query_apache_access_log.py 'access.log*' '(METHOD = post or url ~ *admin
 4. `<`
 5. `>=`
 6. `<=`
+7. `!`
 
 ### Inter expression
 
@@ -91,13 +116,13 @@ python3 query_apache_access_log.py 'access.log*' '(METHOD = post or url ~ *admin
 
 `\` works only before a *spaces* or *operators* characters else is the `\` character.
 
-## Tests
-
-Data used for tests: https://raw.githubusercontent.com/linuxacademy/content-elastic-log-samples/refs/heads/master/access.log
-
 ## Links
 
- - [Github](https://github.com/mauricelambert/QueryApacheAccessLog)
+ - [Pypi](https://pypi.org/project/QueryCombinedLogFormat)
+ - [Github](https://github.com/mauricelambert/QueryCombinedLogFormat)
+ - [Documentation](https://mauricelambert.github.io/info/python/security/QueryCombinedLogFormat.html)
+ - [Python executable](https://mauricelambert.github.io/info/python/security/QueryCombinedLogFormat.pyz)
+ - [Python Windows executable](https://mauricelambert.github.io/info/python/security/QueryCombinedLogFormat.exe)
 
 ## License
 

@@ -1,0 +1,12 @@
+LICENSE.txt
+MANIFEST.in
+QueryCombinedLogFormat.py
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+QueryCombinedLogFormat.egg-info/PKG-INFO
+QueryCombinedLogFormat.egg-info/SOURCES.txt
+QueryCombinedLogFormat.egg-info/dependency_links.txt
+QueryCombinedLogFormat.egg-info/entry_points.txt
+QueryCombinedLogFormat.egg-info/top_level.txt
